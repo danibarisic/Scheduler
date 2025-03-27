@@ -1,7 +1,8 @@
 import React from 'react';
 
+// Create an object with title and course inforation.
 const schedule = {
-  title: "CS Courses for 2018-2019",
+  "title": "CS Courses for 2018-2019",
   "courses": {
     "F101": {
       "id": "F101",
@@ -26,10 +27,39 @@ const schedule = {
   }
 };
 
+// Creates an h1 banner using the title.
+const Banner = ({ title }) => (
+  <h1>{title}</h1>
+);
+
+const CourseList = ({ courses }) => (
+  <div>
+    {Object.values(courses).map(course => <Course course={course} />)}
+  </div>
+);
+
+const terms = { F: 'Fall', W: 'Winter', S: 'Spring' };
+
+// Gets the course term based on the first letter ie: F (Fall).
+const getCourseTerm = course => (
+  terms[course.id.charAt(0)]
+);
+
+// Slice the course ID number.
+const getCourseNumber = course => (
+  course.id.slice(1, 4)
+);
+
+const Course = ({ course }) => (
+  <div>
+    {getCourseTerm(course)} CS {getCourseNumber(course)}: {course.title}
+  </div>
+);
+
 const App = () => (
   <div>
     <Banner title={schedule.title} />
-    <courseList courses={schedule.courses} />
+    <CourseList courses={schedule.courses} />
   </div>
 );
 
