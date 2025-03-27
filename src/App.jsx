@@ -1,45 +1,36 @@
-import { useState } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
 
-const App = () => {
-  const [count, setCount] = useState(0);
-
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button onClick={() => setCount(count => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.jsx</code> and save to test hot module replacement (HMR).
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-    </div>
-  );
+const schedule = {
+  title: "CS Courses for 2018-2019",
+  "courses": {
+    "F101": {
+      "id": "F101",
+      "meets": "MWF 11:00-11:50",
+      "title": "Computer Science: Concepts, Philosophy, and Connections"
+    },
+    "F110": {
+      "id": "F110",
+      "meets": "MWF 10:00-10:50",
+      "title": "Intro Programming for non-majors"
+    },
+    "S313": {
+      "id": "S313",
+      "meets": "TuTh 15:30-16:50",
+      "title": "Tangible Interaction Design and Learning"
+    },
+    "S314": {
+      "id": "S314",
+      "meets": "TuTh 9:30-10:50",
+      "title": "Tech & Human Interaction"
+    }
+  }
 };
+
+const App = () => (
+  <div>
+    <Banner title={schedule.title} />
+    <courseList courses={schedule.courses} />
+  </div>
+);
 
 export default App;
