@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 
@@ -42,9 +42,36 @@ const Banner = ({ title }) => (
   <h1>{title}</h1>
 );
 
-const CourseList = ({ courses }) => (
-  <div className="course-list">
-    {Object.values(courses).map(course => <Course course={course} key={course.id} />)}
+const CourseList = ({ courses }) => {
+  const [term, setTerm] = useState('Spring');
+  const termCourses = Object.values(courses).filter(course => term === getCourseTerm(course));
+
+  return (
+    <>
+      <TermSelector term={term} setTerm={setTerm} />
+      <div className="course-list">
+        {termCourses.map(course => <Course course={course} key={course.id} />)}
+      </div>
+    </>
+  )
+};
+
+const TermButton = ({ term, setTerm, checked }) => (
+  <>
+    <input type="radio" id={term} className="btn-check" autoComplete="off" onChange={() => setTerm(term)} checked={checked} />
+    <label className="btn btn-success m-1 p-2" htmlFor={term}>
+      {term}
+    </label>
+  </>
+);
+
+const TermSelector = ({ term, setTerm }) => (
+  <div className="btn-group">
+    {
+      Object.values(terms).map(value => (
+        <TermButton key={value} term={value} setTerm={setTerm} checked={value === term} />
+      ))
+    }
   </div>
 );
 
@@ -80,7 +107,6 @@ const Main = () => {
   if (error) return <h1>{error}</h1>;
   if (isLoading) return <h1>Loading the schedule...</h1>
 
-  console.log(data);
   return (
     <div className="container">
       <Banner title={schedule.title} />
