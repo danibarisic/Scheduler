@@ -35,9 +35,12 @@ export const timeParts = meets => {
     };
 };
 
-export const mapValues = (fn, obj) => (
-    Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, fn(value)]))
-);
+export const mapValues = (fn, obj) => {
+    if (!obj) {
+        return {};
+    }
+    return Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, fn(value)]))
+}
 
 export const addCourseTimes = course => ({
     ...course,
