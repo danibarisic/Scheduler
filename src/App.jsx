@@ -1,42 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { hasConflict, days, daysOverlap, hoursOverlap, timeConflict, courseConflict, meetsPat, timeParts, addCourseTimes, mapValues, addScheduleTimes } from './utilities/times.js';
+import { useData } from "./utilities/firebase.js";
+// import { getDatabase, onValue, ref, set } from "firebase/database";
+// import { database } from "./utilities/firebase.js";
 
-// Fetching data from API.
-const fetchSchedule = async () => {
-  const url = "https://courses.cs.northwestern.edu/394/guides/data/cs-courses.php";
-  const response = await fetch(url);
-  if (!response.ok) throw response;
-  return addScheduleTimes(await response.json());
-};
+// // Fetching data from API.
+// const fetchSchedule = async () => {
+//   const url = "https://courses.cs.northwestern.edu/394/guides/data/cs-courses.php";
+//   const response = await fetch(url);
+//   if (!response.ok) throw response;
+//   return addScheduleTimes(await response.json());
+// };
 
 // Create an object with title and course inforation.
-const schedule = {
-  "title": "CS Courses for 2018-2019",
-  "courses": {
-    "F101": {
-      "id": "F101",
-      "meets": "MWF 11:00-11:50",
-      "title": "Computer Science: Concepts, Philosophy, and Connections"
-    },
-    "F110": {
-      "id": "F110",
-      "meets": "MWF 10:00-10:50",
-      "title": "Intro Programming for non-majors"
-    },
-    "S313": {
-      "id": "S313",
-      "meets": "TuTh 15:30-16:50",
-      "title": "Tangible Interaction Design and Learning"
-    },
-    "S314": {
-      "id": "S314",
-      "meets": "TuTh 9:30-10:50",
-      "title": "Tech & Human Interaction"
-    }
-  }
-};
+// const schedule = {
+//   "title": "CS Courses for 2018-2019",
+//   "courses": {
+//     "F101": {
+//       "id": "F101",
+//       "meets": "MWF 11:00-11:50",
+//       "title": "Computer Science: Concepts, Philosophy, and Connections"
+//     },
+//     "F110": {
+//       "id": "F110",
+//       "meets": "MWF 10:00-10:50",
+//       "title": "Intro Programming for non-majors"
+//     },
+//     "S313": {
+//       "id": "S313",
+//       "meets": "TuTh 15:30-16:50",
+//       "title": "Tangible Interaction Design and Learning"
+//     },
+//     "S314": {
+//       "id": "S314",
+//       "meets": "TuTh 9:30-10:50",
+//       "title": "Tech & Human Interaction"
+//     }
+//   }
+// };
 
 // Creates an h1 banner using the title.
 const Banner = ({ title }) => (
@@ -113,18 +116,15 @@ const Course = ({ course, selected, setSelected }) => {
 }
 
 const Main = () => {
-  const { schedule: data, isLoading, error } = useQuery({
-    queryKey: ['schedule'],
-    queryFn: fetchSchedule
-  });
+  const [courses, loading, error] = useData('/courses', addScheduleTimes);
 
   if (error) return <h1>{error}</h1>;
-  if (isLoading) return <h1>Loading the schedule...</h1>
+  if (loading) return <h1>Loading the schedule...</h1>
 
   return (
     <div className="container">
-      <Banner title={schedule.title} />
-      <CourseList courses={schedule.courses} />
+      <Banner title={courses.title} />
+      <CourseList courses={courses} />
     </div>
   );
 };
