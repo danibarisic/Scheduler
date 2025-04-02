@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, onValue, ref, set } from "firebase/database";
-import { useDatabaseValue } from "@react-query-firebase/database";
+import { getDatabase, ref } from "firebase/database";
+import { useObject } from "react-firebase-hooks/database";
 
 export const firebaseConfig = {
     apiKey: "AIzaSyC3uDDj6NUQHZBT6AZODStmidUswrhOfg4",
@@ -17,8 +17,12 @@ export const firebase = initializeApp(firebaseConfig);
 export const database = getDatabase(firebase);
 
 export const useData = (path, transform) => {
-    const { data, isLoading, error } = useDatabaseValue([path], ref(database, path), { subscribe: true });
-    const value = (!isLoading && !error && transform) ? transform(data) : data;
+    const [snapshot, loading, error] = useObject(ref(database, path));
+    let data;
+    if (snapshot) {
+        const value = snapshot.val();
+        data = !loading && !error && transform ? transform(value) : value;
+    }
 
-    return [value, isLoading, error];
+    return [data, loading, error];
 };

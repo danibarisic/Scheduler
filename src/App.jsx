@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import "./App.css";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
-import { hasConflict, days, daysOverlap, hoursOverlap, timeConflict, courseConflict, meetsPat, timeParts, addCourseTimes, mapValues, addScheduleTimes } from './utilities/times.js';
+import { hasConflict, days, daysOverlap, hoursOverlap, timeConflict, courseConflict, meetsPat, timeParts, addCourseTimes, mapValues, addScheduleTimes } from "./utilities/times.js";
 import { useData } from "./utilities/firebase.js";
-// import { getDatabase, onValue, ref, set } from "firebase/database";
-// import { database } from "./utilities/firebase.js";
+
 
 // // Fetching data from API.
 // const fetchSchedule = async () => {
@@ -41,7 +40,6 @@ import { useData } from "./utilities/firebase.js";
 //   }
 // };
 
-// Creates an h1 banner using the title.
 const Banner = ({ title }) => (
   <h1>{title}</h1>
 );
@@ -49,13 +47,13 @@ const Banner = ({ title }) => (
 const CourseList = ({ courses }) => {
   const [term, setTerm] = useState('Fall');
   const [selected, setSelected] = useState([]);
-  const termCourses = Object.values(courses).filter(course => term === getCourseTerm(course));
+  const termCourses = Object.values(courses).filter(course => term === course.term);
 
   return (
     <>
       <TermSelector term={term} setTerm={setTerm} />
       <div className="course-list">
-        {termCourses.map(course => <Course course={course} key={course.id} selected={selected} setSelected={setSelected} />)}
+        {termCourses.map(course => <Course course={course} key={course.number} selected={selected} setSelected={setSelected} />)}
       </div>
     </>
   )
@@ -86,16 +84,6 @@ const TermSelector = ({ term, setTerm }) => (
 
 const terms = { F: 'Fall', W: 'Winter', S: 'Spring' };
 
-// Gets the course term based on the first letter ie: F (Fall).
-const getCourseTerm = course => (
-  terms[course.id.charAt(0)]
-);
-
-// Slice the course ID number.
-const getCourseNumber = course => (
-  course.id.slice(1, 4)
-);
-
 const Course = ({ course, selected, setSelected }) => {
   const isSelected = selected.includes(course);
   const isDisabled = !isSelected && hasConflict(course, selected);
@@ -106,7 +94,7 @@ const Course = ({ course, selected, setSelected }) => {
       style={style}
       onClick={isDisabled ? null : () => setSelected(toggle(course, selected))}>
       <div className="card-body">
-        <div className="card-title fs-4">{getCourseTerm(course)} CS {getCourseNumber(course)}</div>
+        <div className="card-title fs-4">{course.term} CS {course.number}</div>
         <div className="card-text">{course.title}</div>
         <hr></hr>
         <div className="card-text">{course.meets}</div>
@@ -116,15 +104,16 @@ const Course = ({ course, selected, setSelected }) => {
 }
 
 const Main = () => {
-  const [courses, loading, error] = useData('/courses', addScheduleTimes);
+  const [courses, loading, error] = useData('/', addScheduleTimes);
+  console.log(courses);
 
   if (error) return <h1>{error}</h1>;
   if (loading) return <h1>Loading the schedule...</h1>
 
   return (
     <div className="container">
-      <Banner title={courses.title} />
-      <CourseList courses={courses} />
+      <Banner title={"CS Courses 2018-2019"} />
+      <CourseList courses={courses.courses} />
     </div>
   );
 };

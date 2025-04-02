@@ -19,7 +19,7 @@ export const timeConflict = (course1, course2) => (
 );
 
 export const courseConflict = (course1, course2) => (
-    getCourseTerm(course1) === getCourseTerm(course2) && timeConflict(course1, course2)
+    course1.term === course2.term && timeConflict(course1, course2)
 );
 
 export const meetsPat = /^ *((?:M|Tu|W|Th|F)+) +(\d\d?):(\d\d) *[ -] *(\d\d?):(\d\d) *$/;
