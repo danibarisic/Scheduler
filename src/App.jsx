@@ -3,6 +3,9 @@ import "./App.css";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { hasConflict, days, daysOverlap, hoursOverlap, timeConflict, courseConflict, meetsPat, timeParts, addCourseTimes, mapValues, addScheduleTimes } from "./utilities/times.js";
 import { useData } from "./utilities/firebase.js";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import EditForm from "./EditForm.jsx"
+import { useLocation } from "react-router-dom";
 
 
 // // Fetching data from API.
@@ -88,11 +91,13 @@ const Course = ({ course, selected, setSelected }) => {
   const isSelected = selected.includes(course);
   const isDisabled = !isSelected && hasConflict(course, selected);
   const style = { backgroundColor: isDisabled ? 'lightgrey' : isSelected ? 'lightgreen' : 'white' };
+  const navigate = useNavigate();
 
   return (
     <div className="card m-1 p-2"
       style={style}
-      onClick={isDisabled ? null : () => setSelected(toggle(course, selected))}>
+      onClick={isDisabled ? null : () => setSelected(toggle(course, selected))}
+      onDoubleClick={() => navigate('/edit', { state: course })}>
       <div className="card-body">
         <div className="card-title fs-4">{course.term} CS {course.number}</div>
         <div className="card-text">{course.title}</div>
@@ -105,15 +110,19 @@ const Course = ({ course, selected, setSelected }) => {
 
 const Main = () => {
   const [courses, loading, error] = useData('/', addScheduleTimes);
-  console.log(courses);
 
   if (error) return <h1>{error}</h1>;
   if (loading) return <h1>Loading the schedule...</h1>
 
   return (
     <div className="container">
-      <Banner title={"CS Courses 2018-2019"} />
-      <CourseList courses={courses.courses} />
+      <Banner title={courses.title} />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<CourseList courses={courses.courses} />} />
+          <Route path="/edit" element={<EditForm />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 };
