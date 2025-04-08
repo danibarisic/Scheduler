@@ -1,6 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref } from "firebase/database";
+import { getDatabase, ref, set } from "firebase/database";
 import { useObject } from "react-firebase-hooks/database";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 
 export const firebaseConfig = {
     apiKey: "AIzaSyC3uDDj6NUQHZBT6AZODStmidUswrhOfg4",
@@ -11,6 +13,16 @@ export const firebaseConfig = {
     messagingSenderId: "404408397480",
     appId: "1:404408397480:web:1a7b992ecdc55478689c9d",
     measurementId: "G-L2754064B4"
+};
+
+export const signInWithGoogle = () => {
+    signInWithPopup(getAuth(firebase), new GoogleAuthProvider());
+};
+
+export const firebaseSignOut = () => signOut(getAuth(firebase));
+export const useUserState = () => {
+    const auth = getAuth(firebase);
+    return useAuthState(auth);
 };
 
 export const firebase = initializeApp(firebaseConfig);
@@ -25,4 +37,10 @@ export const useData = (path, transform) => {
     }
 
     return [data, loading, error];
+};
+
+export const setData = (path, value) => {
+    console.log(path);
+    console.log(value);
+    set(ref(database, path), value)
 };

@@ -2,6 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App';
+import './index.css';
+
+<head>
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups" />
+</head>
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
